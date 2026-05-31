@@ -1,1 +1,3 @@
-venv/django-admin startproject config .
+__pycache__/
+
+venv/
