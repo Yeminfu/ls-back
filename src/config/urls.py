@@ -38,6 +38,7 @@ urlpatterns = [
 urlpatterns += [
     path('api/', include('api.urls')),
     path('api/auth/register/', RegisterView.as_view(), name='register'),
+path("api/", include("mediafiles.urls")),
 ]
 
 if settings.DEBUG:
@@ -45,3 +46,4 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+

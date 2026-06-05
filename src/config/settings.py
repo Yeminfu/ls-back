@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'api',
+    'mediafiles',
 ]
 
 REST_FRAMEWORK = {
