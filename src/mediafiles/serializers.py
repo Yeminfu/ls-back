@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import MediaFile
+
+from .models import MediaFile, MediaLink, MediaType
 
 
 class MediaFileSerializer(serializers.ModelSerializer):
@@ -27,15 +28,36 @@ class MediaFileSerializer(serializers.ModelSerializer):
 
 class MediaUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
+    entity_type = serializers.CharField(required=False)
+    entity_id = serializers.IntegerField(required=False)
 
     def create(self, validated_data):
         uploaded_file = validated_data["file"]
 
+        mime_type = uploaded_file.content_type
+
+        media_type = (
+            MediaType.IMAGE
+            if mime_type.startswith("image/")
+            else MediaType.VIDEO
+        )
+
         media_file = MediaFile.objects.create(
             file=uploaded_file,
+            type=media_type,
             original_name=uploaded_file.name,
-            mime_type=uploaded_file.content_type,
+            mime_type=mime_type,
             size=uploaded_file.size,
         )
+
+        entity_type = validated_data.get("entity_type")
+        entity_id = validated_data.get("entity_id")
+
+        if entity_type and entity_id:
+            MediaLink.objects.create(
+                media_file=media_file,
+                entity_type=entity_type,
+                entity_id=entity_id,
+            )
 
         return media_file
