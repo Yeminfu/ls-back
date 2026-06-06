@@ -1,3 +1,4 @@
+from mediafiles.models import MediaFile
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
@@ -35,3 +36,39 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             email=validated_data.get("email"),
             password=validated_data["password"],
         )
+
+
+User = get_user_model()
+
+class UserListSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "avatar",
+        )
+
+    def get_avatar(self, obj):
+        request = self.context.get("request")
+
+        media = (
+            MediaFile.objects
+            .filter(
+                links__entity_type="user_avatar",
+                links__entity_id=obj.id,
+            )
+            .first()
+        )
+
+        if not media:
+            return None
+
+        if request:
+            return request.build_absolute_uri(media.file.url)
+
+        return media.file.url

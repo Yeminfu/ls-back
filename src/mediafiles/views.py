@@ -1,7 +1,6 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 
-from .models import MediaFile
 from .serializers import (
     MediaFileSerializer,
     MediaUploadSerializer,
