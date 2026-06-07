@@ -3,6 +3,20 @@
 source venv/bin/activate
 ```
 
+``` # создать суперюзера
+DJANGO_SUPERUSER_PASSWORD=secret123 \
+python3 src/manage.py createsuperuser \
+    --noinput \
+    --username admin \
+    --email admin@example.com
+```
+
+# создать группу волонтеров
+```
+python3 src/manage.py create_volunteer_group
+```
+
+
 ```
 # Запустить проект
 python3 src/manage.py runserver 0.0.0.0:8001
