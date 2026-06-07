@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'api',
     'mediafiles',
+    'volunteers',
 ]
 
 REST_FRAMEWORK = {

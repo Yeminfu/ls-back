@@ -38,7 +38,8 @@ urlpatterns = [
 urlpatterns += [
     path('api/', include('api.urls')),
     path('api/auth/register/', RegisterView.as_view(), name='register'),
-path("api/", include("mediafiles.urls")),
+    path("api/", include("mediafiles.urls")),
+    path("api/", include("volunteers.urls")),
 ]
 
 if settings.DEBUG:
