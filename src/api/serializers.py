@@ -1,6 +1,7 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from mediafiles.models import MediaFile
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
@@ -40,8 +41,16 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 User = get_user_model()
 
+class GroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = ("id", "name")
+
+
 class UserListSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
+    groups = GroupSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -51,6 +60,7 @@ class UserListSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "avatar",
+            "groups",
         )
 
     def get_avatar(self, obj):
