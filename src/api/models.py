@@ -9,3 +9,8 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
+    email = models.EmailField(
+        unique=True,
+        null=True,
+        blank=True,
+    )

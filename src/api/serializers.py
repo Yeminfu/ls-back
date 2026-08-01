@@ -10,6 +10,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
+    email = serializers.EmailField(
+        required=False, allow_blank=True, allow_null=True
+    )
     nickname = serializers.CharField(
         required=False, allow_blank=True, allow_null=True
     )
@@ -18,6 +21,14 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(
                 "A user with that username already exists."
+            )
+        return value
+
+    def validate_email(self, value):
+        value = value or None
+        if value and User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                "This email is already registered."
             )
         return value
 
@@ -55,6 +66,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class AdminUserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
     is_active = serializers.BooleanField(required=False, default=True)
+    email = serializers.EmailField(
+        required=False, allow_blank=True, allow_null=True
+    )
     nickname = serializers.CharField(
         required=False, allow_blank=True, allow_null=True
     )
@@ -63,6 +77,14 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(
                 "A user with that username already exists."
+            )
+        return value
+
+    def validate_email(self, value):
+        value = value or None
+        if value and User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                "This email is already registered."
             )
         return value
 
