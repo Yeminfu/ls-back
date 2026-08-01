@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'api',
     'mediafiles',
-    'volunteers',
 ]
 
 REST_FRAMEWORK = {
