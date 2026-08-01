@@ -1,6 +1,12 @@
 ```
 # Активировать окружение
-source venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+```
+python src/manage.py migrate
 ```
 
 ``` # создать суперюзера
@@ -9,6 +15,10 @@ python3 src/manage.py createsuperuser \
     --noinput \
     --username admin \
     --email admin@example.com
+```
+
+```
+python src/manage.py runserver
 ```
 
 # создать группу волонтеров
