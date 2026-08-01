@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
-from .models import MediaFile, MediaLink, MediaType
+from .models import MediaFile, MediaLink
 
 
 class MediaFileSerializer(serializers.ModelSerializer):
@@ -13,7 +13,6 @@ class MediaFileSerializer(serializers.ModelSerializer):
             "id",
             "url",
             "original_name",
-            "mime_type",
             "size",
             "created_at",
         )
@@ -35,19 +34,9 @@ class MediaUploadSerializer(serializers.Serializer):
     def create(self, validated_data):
         uploaded_file = validated_data["file"]
 
-        mime_type = uploaded_file.content_type
-
-        media_type = (
-            MediaType.IMAGE
-            if mime_type.startswith("image/")
-            else MediaType.VIDEO
-        )
-
         media_file = MediaFile.objects.create(
             file=uploaded_file,
-            type=media_type,
             original_name=uploaded_file.name,
-            mime_type=mime_type,
             size=uploaded_file.size,
         )
 
