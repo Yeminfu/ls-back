@@ -148,8 +148,6 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return value
 
 
-User = get_user_model()
-
 class GroupSerializer(serializers.ModelSerializer):
 
     class Meta:

@@ -1,7 +1,9 @@
-from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework import serializers
 
 from .models import MediaFile, MediaLink
+
+User = get_user_model()
 
 
 class MediaFileSerializer(serializers.ModelSerializer):
@@ -52,8 +54,6 @@ class MediaUploadSerializer(serializers.Serializer):
 
         return media_file
 
-
-User = get_user_model()
 
 class UserListSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
