@@ -6,6 +6,17 @@ User = get_user_model()
 
 class VolunteerCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    nickname = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+
+    def validate_nickname(self, value):
+        value = value or None
+        if value and User.objects.filter(nickname=value).exists():
+            raise serializers.ValidationError(
+                "This nickname is already taken."
+            )
+        return value
 
     class Meta:
         model = User
@@ -15,6 +26,7 @@ class VolunteerCreateSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "nickname",
             "password",
         )
         
@@ -27,10 +39,12 @@ class VolunteerCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop("password")
+        nickname = validated_data.pop("nickname", None) or None
 
         user = User.objects.create_user(
             **validated_data,
             password=password,
+            nickname=nickname,
         )
 
         volunteers_group = Group.objects.get(

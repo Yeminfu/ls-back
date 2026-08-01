@@ -10,11 +10,22 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True)
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
+    nickname = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(
                 "A user with that username already exists."
+            )
+        return value
+
+    def validate_nickname(self, value):
+        value = value or None
+        if value and User.objects.filter(nickname=value).exists():
+            raise serializers.ValidationError(
+                "This nickname is already taken."
             )
         return value
 
@@ -26,6 +37,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "nickname",
             "password",
         )
 
@@ -36,17 +48,29 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             last_name=validated_data["last_name"],
             email=validated_data.get("email"),
             password=validated_data["password"],
+            nickname=validated_data.get("nickname") or None,
         )
 
 
 class AdminUserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
     is_active = serializers.BooleanField(required=False, default=True)
+    nickname = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError(
                 "A user with that username already exists."
+            )
+        return value
+
+    def validate_nickname(self, value):
+        value = value or None
+        if value and User.objects.filter(nickname=value).exists():
+            raise serializers.ValidationError(
+                "This nickname is already taken."
             )
         return value
 
@@ -58,6 +82,7 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
             "email",
             "first_name",
             "last_name",
+            "nickname",
             "password",
             "is_active",
         )
@@ -71,7 +96,34 @@ class AdminUserCreateSerializer(serializers.ModelSerializer):
             email=validated_data.get("email"),
             password=validated_data["password"],
             is_active=is_active,
+            nickname=validated_data.get("nickname") or None,
         )
+
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    nickname = serializers.CharField(
+        required=False, allow_blank=True, allow_null=True
+    )
+
+    class Meta:
+        model = User
+        fields = (
+            "first_name",
+            "last_name",
+            "nickname",
+        )
+
+    def validate_nickname(self, value):
+        value = value or None
+        if value:
+            qs = User.objects.filter(nickname=value)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise serializers.ValidationError(
+                    "This nickname is already taken."
+                )
+        return value
 
 
 User = get_user_model()
@@ -94,6 +146,7 @@ class UserListSerializer(serializers.ModelSerializer):
             "username",
             "first_name",
             "last_name",
+            "nickname",
             "avatar",
             "groups",
         )

@@ -10,6 +10,7 @@ from .serializers import (
     GroupSerializer,
     UserListSerializer,
     UserRegistrationSerializer,
+    UserUpdateSerializer,
 )
 
 
@@ -29,6 +30,23 @@ class UserListView(generics.ListAPIView):
 class AdminUserCreateView(generics.CreateAPIView):
     serializer_class = AdminUserCreateSerializer
     permission_classes = [permissions.IsAdminUser]
+
+
+class IsOwnerOrAdmin(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return request.user == obj or request.user.is_staff
+
+
+class UserDetailView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    lookup_url_kwarg = "user_id"
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrAdmin]
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return UserListSerializer
+        return UserUpdateSerializer
 
 
 class GroupViewSet(viewsets.ModelViewSet):
