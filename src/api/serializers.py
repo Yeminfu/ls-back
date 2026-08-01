@@ -39,6 +39,41 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
 
+class AdminUserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True, required=True)
+    is_active = serializers.BooleanField(required=False, default=True)
+
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError(
+                "A user with that username already exists."
+            )
+        return value
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "password",
+            "is_active",
+        )
+
+    def create(self, validated_data):
+        is_active = validated_data.pop("is_active", True)
+        return User.objects.create_user(
+            username=validated_data["username"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
+            email=validated_data.get("email"),
+            password=validated_data["password"],
+            is_active=is_active,
+        )
+
+
 User = get_user_model()
 
 class GroupSerializer(serializers.ModelSerializer):

@@ -5,7 +5,12 @@ from rest_framework import generics, permissions, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import GroupSerializer, UserListSerializer, UserRegistrationSerializer
+from .serializers import (
+    AdminUserCreateSerializer,
+    GroupSerializer,
+    UserListSerializer,
+    UserRegistrationSerializer,
+)
 
 
 class RegisterView(generics.CreateAPIView):
@@ -19,6 +24,11 @@ User = get_user_model()
 class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserListSerializer
+
+
+class AdminUserCreateView(generics.CreateAPIView):
+    serializer_class = AdminUserCreateSerializer
+    permission_classes = [permissions.IsAdminUser]
 
 
 class GroupViewSet(viewsets.ModelViewSet):
