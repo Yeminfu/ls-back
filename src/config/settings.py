@@ -66,15 +66,8 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
     'SECURITY': [
-        {'JWTAuth': []},
+        {'jwtAuth': []},
     ],
-    'SECURITY_SCHEMES': {
-        'JWTAuth': {
-            'type': 'http',
-            'scheme': 'bearer',
-            'bearerFormat': 'JWT',
-        },
-    },
 }
 
 MIDDLEWARE = [
