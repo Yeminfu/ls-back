@@ -68,6 +68,15 @@ SPECTACULAR_SETTINGS = {
     'SECURITY': [
         {'jwtAuth': []},
     ],
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'jwtAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            },
+        },
+    },
 }
 
 MIDDLEWARE = [
