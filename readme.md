@@ -21,12 +21,6 @@ python3 src/manage.py createsuperuser \
 python src/manage.py runserver
 ```
 
-# создать группу волонтеров
-```
-python3 src/manage.py create_volunteer_group
-```
-
-
 ```
 # Запустить проект
 python3 src/manage.py runserver 0.0.0.0:8001

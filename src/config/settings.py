@@ -35,6 +35,8 @@ ALLOWED_HOSTS = [
 
 # Application definition
 
+AUTH_USER_MODEL = "api.User"
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,7 +49,6 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'api',
     'mediafiles',
-    'volunteers',
 ]
 
 REST_FRAMEWORK = {
@@ -64,6 +65,18 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'liga-spas API',
     'VERSION': '1.0.0',
     'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
+    'SECURITY': [
+        {'jwtAuth': []},
+    ],
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'jwtAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            },
+        },
+    },
 }
 
 MIDDLEWARE = [
