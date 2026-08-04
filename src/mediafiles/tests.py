@@ -96,8 +96,50 @@ class MediaFileApiTests(TestCase):
             {"entity_type": "user", "entity_id": self.user.id},
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]["id"], str(media.id))
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["results"][0]["id"], str(media.id))
+
+    def test_list_paginates_by_default(self):
+        for i in range(25):
+            MediaFile.objects.create(
+                file=SimpleUploadedFile(
+                    f"photo_{i}.jpg",
+                    b"file-content",
+                    content_type="image/jpeg",
+                ),
+                original_name=f"photo_{i}.jpg",
+                size=12,
+            )
+        response = self.client.get(reverse("media-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["count"], 25)
+        self.assertEqual(len(response.data["results"]), 20)
+        self.assertIsNotNone(response.data["next"])
+
+    def test_list_respects_page_size_and_max(self):
+        for i in range(110):
+            MediaFile.objects.create(
+                file=SimpleUploadedFile(
+                    f"photo_{i}.jpg",
+                    b"file-content",
+                    content_type="image/jpeg",
+                ),
+                original_name=f"photo_{i}.jpg",
+                size=12,
+            )
+        response = self.client.get(
+            reverse("media-list"),
+            {"page_size": 5},
+        )
+        self.assertEqual(response.data["count"], 110)
+        self.assertEqual(len(response.data["results"]), 5)
+
+        response = self.client.get(
+            reverse("media-list"),
+            {"page_size": 999},
+        )
+        self.assertEqual(response.data["count"], 110)
+        self.assertEqual(len(response.data["results"]), 100)
 
     def test_list_partial_params_returns_400(self):
         response = self.client.get(
